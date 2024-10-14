@@ -1,0 +1,43 @@
+const agregarTarea = async () => {
+  const descripcion = document.querySelector('#nuevaTarea').value;
+
+  // Validación para asegurarnos que la descripción no esté vacía
+  if (descripcion.trim() === '') {
+    alert('Por favor, ingresa una descripción para la tarea');
+    return;
+  }
+
+  // Enviamos una solicitud POST al backend para agregar la tarea
+  const response = await fetch('http://localhost:3000/tareas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descripcion }), // Enviamos la descripción en formato JSON
+  });
+
+  // Recibimos la tarea creada desde el backend y la agregamos a la lista
+  const tarea = await response.json();
+  agregarTareaALista(tarea); // Esta es una función que deberías tener para actualizar el DOM
+};
+
+const obtenerTareas = async () => {
+    // Enviamos una solicitud GET para obtener todas las tareas
+    const response = await fetch('http://localhost:3000/tareas');
+    const data = await response.json();
+  
+    // Recorremos las tareas obtenidas y las agregamos a la lista
+    data.tareas.forEach((tarea) => agregarTareaALista(tarea));
+  };
+  
+  // Ejecutar la función obtenerTareas cuando el DOM esté completamente cargado
+  document.addEventListener('DOMContentLoaded', obtenerTareas);
+  
+const agregarTareaALista = (tarea) => {
+  const lista = document.querySelector('#listaTareas');
+
+  // Crear un elemento <li> para la tarea
+  const li = document.createElement('li');
+  li.textContent = tarea.descripcion;
+
+  // Agregar el <li> a la lista en el DOM
+  lista.appendChild(li);
+};
